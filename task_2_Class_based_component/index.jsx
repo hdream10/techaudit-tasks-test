@@ -16,38 +16,49 @@
  * - Maintain correct behavior when props or state change.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { Component } from 'react';
 
-const FunctionalCounter = ({ count, initialName }) => {
-	const [name, setName] = useState(initialName || "Anonymous");
-	const [clicks, setClicks] = useState(0);
-
-	useEffect(() => {
-		console.log(`Count has changed to: ${count}`);
-	}, [count]);
-
-	useEffect(() => {
-		console.log(`Clicks have been updated: ${clicks}`);
-	}, [clicks]);
-
-	useEffect(() => {
-		console.log("Setting up observers");
-
-		return () => {
-			console.log("Clear observers");
-		};
-	}, []);
-
-	const handleClick = () => {
-		setClicks(clicks + 1);
+class ClassCounter extends Component {
+	constructor(props) {
+	  super(props);
+	  this.state = {
+		name: props.initialName || "Anonymous",
+		clicks: 0,
+	  };
+	}
+  
+	componentDidMount() {
+	  console.log("Setting up observers");
+	}
+  
+	componentDidUpdate(prevProps, prevState) {
+	  if (prevProps.count !== this.props.count) {
+		console.log(`Count has changed to: ${this.props.count}`);
+	  }
+	  if (prevState.clicks !== this.state.clicks) {
+		console.log(`Clicks have been updated: ${this.state.clicks}`);
+	  }
+	}
+  
+	componentWillUnmount() {
+	  console.log("Clear observers");
+	}
+  
+	handleClick = () => {
+	  this.setState((prevState) => ({
+		clicks: prevState.clicks + 1,
+	  }));
 	};
-
-	return (
+  
+	render() {
+	  return (
 		<div>
-			<div>Name: {name}</div>
-			<div>Count: {count}</div>
-			<div>Clicks: {clicks}</div>
-			<button onClick={handleClick}>Increment Clicks</button>
+		  <div>Name: {this.state.name}</div>
+		  <div>Count: {this.props.count}</div>
+		  <div>Clicks: {this.state.clicks}</div>
+		  <button onClick={this.handleClick}>Increment Clicks</button>
 		</div>
-	);
-};
+	  );
+	}
+  }
+  

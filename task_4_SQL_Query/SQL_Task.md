@@ -22,13 +22,20 @@ Sort the results alphabetically by `product_category`.
 
 Output columns: `product_category`, `quantity_sum`, `sales_level`
 
-### Example Schema
-
-You can refer to this schema as an example:
+### Result
 
 ```sql
-CREATE TABLE sales (
-    id SERIAL PRIMARY KEY,
-    product_category TEXT,
-    quantity INTEGER,
-);
+SELECT 
+    product_category,
+    SUM(quantity) AS quantity_sum,
+    CASE
+        WHEN SUM(quantity) < 50 THEN 'Low Sales'
+        WHEN SUM(quantity) BETWEEN 50 AND 100 THEN 'Medium Sales'
+        WHEN SUM(quantity) > 100 THEN 'High Sales'
+    END AS sales_level
+FROM 
+    sales
+GROUP BY 
+    product_category
+ORDER BY 
+    product_category;
